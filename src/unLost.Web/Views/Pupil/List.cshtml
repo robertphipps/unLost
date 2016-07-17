@@ -1,0 +1,64 @@
+﻿@using System.Data.Entity;
+@{
+    ViewData["Title"] = "List Pupils";
+    DbSet<unLost.Web.Models.Pupil> pupils = Model;
+}
+
+<h1>@ViewData["Title"]</h1>
+<p><a class="btn btn-default" href="/Pupil/Edit"><span class="glyphicon glyphicon-plus-sign"></span> Add Pupil</a></p>
+<div class="pupilsTable">
+    <input class="search" placeholder="Search" />
+    <button class="sort" data-sort="surname">
+        Sort by surname
+    </button>
+    <table class="table table-hover">
+        <caption>Found @pupils.Count() pupils</caption>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Forename</th>
+                <th>Surname</th>
+                <th>Candidate #</th>
+                <th>Tutor Gp</th>
+                <th>Items</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody class="list">
+            @if (pupils.Count() == 0)
+            {
+                <tr>
+                    <td colspan="7" align="center"><em>No items found</em></td>
+                </tr>
+            }
+            else
+            {
+                foreach (var p in pupils)
+                {
+                    <tr>
+                        <td class="id">@p.PupilId</td>
+                        <td class="forename">@p.Forename</td>
+                        <td class="surname">@p.Surname</td>
+                        <td class="candno">@p.CandNo</td>
+                        <td class="tutorgp">@p.TutorGp</td>
+                        <td class="items">@p.Items.Count - <a asp-action="Items" asp-route-id="@p.PupilId">View</a></td>
+                        <td>
+                            <a asp-controller="Pupil" asp-action="Edit" asp-route-id="@p.PupilId"><span class="glyphicon glyphicon-pencil"></span></a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@section Scripts {
+    <script src="~/lib/list.js/dist/list.min.js"></script>
+    <script>
+        var o = {
+                                        valueNames: ['id', 'forename', 'surname', 'candno', 'tutorgp', 'items']
+        };
+        var itemList = new List('pupilsTable', o);
+    </script>
+}

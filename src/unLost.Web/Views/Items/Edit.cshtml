@@ -1,0 +1,168 @@
+﻿@{
+    ViewData["Title"] = "Edit Item";
+    unLost.Web.Models.Item i = Model;
+    bool newItem = false;
+    if (i == null)
+    {
+        newItem = true;
+        i = new unLost.Web.Models.Item();
+    }
+}
+
+<h1>Edit Item</h1>
+
+<div id="alertContainer"></div>
+
+<form id="editForm">
+    <div class="form-group">
+        <label for="itemIdField">Item ID</label>
+        <input id="itemIdField" name="Id" type="text" class="form-control" readonly value="@(newItem ? "0" : i.ItemId.ToString())" />
+    </div>
+    <div class="form-group">
+        <label for="itemCatField">Category</label>
+        <select class="form-control" id="itemCatField" name="Cat" onchange="updateSubcatOptions()">
+            <option value="0">Select one</option>
+            <option value="1">Sports Kit</option>
+            <option value="2">School Uniform</option>
+            <option value="3">Coats</option>
+            <option value="4">Stationary</option>
+            <option value="5">Other</option>
+         </select>
+    </div>
+    <div class="form-group">
+        <label for="itemSubcatField">Sub-category</label>
+        <select class="form-control" id="itemSubcatField" name="Subcat">
+            <option>n/a</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="itemDescField">Description</label>
+        <textarea class="form-control" id="itemDescField" name="Desc" rows="3">@i.ItemDesc</textarea>
+    </div>
+    <div class="form-group">
+        <label for="itemPupilField">Pupil</label>
+        <input class="form-control" type="text" id="itemPupilField" readonly />
+        <button class="btn btn-default btn-sm" type="button">Choose</button>
+    </div>
+    <div class="form-group">
+        <label for="itemAddedField">Added</label>
+        <input class="form-control" type="text" id="itemAddedField" readonly value="@(newItem ? "new item" : i.Added.ToShortDateString())" />
+    </div>
+    @if (!newItem)
+    {
+        <div class="form-group">
+            <label>Collected</label>
+            <input class="form-control" type="text" id="itemCollectedField" readonly value="@(i.Collected == null ? "Not collected" : "Collected on " + ((DateTime)i.Collected).ToShortDateString())" />
+            @if (i.Collected == null)
+            {
+                <a asp-controller="Items" asp-action="Archive" asp-route-id="@i.ItemId">Mark as collected</a>
+            }
+            
+        </div>
+        <div class="form-group">
+            <label>Mailed</label>
+            <input class="form-control" type="text" id="itemMailedField" readonly value="@(i.Mailed == null ? "Not mailed" : "Notification mailed on " + ((DateTime)i.Collected).ToString())" />
+            <a asp-controller="Item" asp-action="Mail" asp-route-id="@i.ItemId">Send notification mail</a>
+        </div>
+    }
+    <div class="form-group">
+        <button class="btn btn-primary" role="button" type="button" onClick="submitForm()">Submit</button>
+        <a class="btn btn-default" href="/Items/Edit/">New Item</a>
+    </div>
+</form>
+
+@section Scripts {
+<script>
+    var itemCat = @(newItem ? 0 : i.ItemCat);
+    var itemSubcat = @(newItem ? 0 : i.ItemSubcat);
+    var newItem = @(newItem ? "true" : "false");
+
+    $( document ).ready( init() );
+
+    function init() {
+        if (newItem) {
+            addAlert("info", "You are creating a new item", false, "newItemAlert");
+        }
+        // prefill dropdowns
+        $('#itemCatField').val(itemCat);
+        updateSubcatOptions();
+        $('#itemSubcatField').val(itemSubcat);
+    }
+
+    function updateSubcatOptions() {
+        var sc = $('#itemSubcatField');
+        var cval = $('#itemCatField').val();
+        switch ( cval ) {
+            case "0":
+                // not selected
+                sc.empty();
+                sc.html('<option value="0">n/a</option>');
+                break;
+            case "1":
+                // sports kit selected
+                sc.empty();
+                sc.html('<option value="1">Shorts</option><option value="2">Trousers</option><option value="3">Shoes</option><option value="4">Tops</option><option value="5">Outerware</option><option value="6">Equipment</option><option value="7">Other</option>');
+                break;
+            case "2":
+                // school uniform selected
+                sc.empty();
+                sc.html('<option value="1">Blazers</option><option value="2">Shirts</option><option value="3">Trousers</option><option value="4">Shoes</option><option value="5">Other</option>');
+                break;
+            case "3":
+                // coats selected
+                sc.empty();
+                sc.html('<option value="0">n/a</option>');
+                break;
+            case "4":
+                // other selected
+                sc.empty();
+                sc.html('<option value="0">n/a</option>');
+                break;
+            default:
+                sc.empty();
+                sc.html("<option>Error. Please try again</option>");
+        }
+    }
+
+    function submitForm(){
+        if ( !validateForm() ) {
+            // TODO: Highlight broken fields, plus use bootstrap alert
+            alert("There is an error in your form");
+            return;
+        }
+        var formdata = $('#editForm').serialize();
+        $.ajax({
+            url: '/Items/Update',
+            data: formdata,
+            type: 'POST',
+            error: function(){
+                alert("request failed");       
+            },
+            success: function(json){
+                if (newItem){
+                    $('#newItemAlert').alert('close');
+                }
+                $('#itemIdField').val(json.itemId);
+                $('#itemAddedField').val("Just now");
+                addAlert("success", json.status, true, 'successAlert');
+            }
+        });
+    }
+
+    function validateForm() {
+        // TODO: Form validation
+        return true;    
+    }
+
+    function addAlert(type, text, dismissible, id) {
+        var alert = '<div id="' + id + '" class="alert alert-' + type;
+        if (dismissible){
+            alert = alert + ' alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+        } else {
+            alert = alert + '" role="alert">';        
+        }
+        alert = alert + text + '</div>';
+        $('#alertContainer').append(alert);    
+    }
+</script>
+}

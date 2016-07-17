@@ -1,0 +1,9 @@
+﻿@{
+    ViewData["Title"] = "Item archived";
+    var m = (unLost.Web.Models.Item)Model;
+}
+
+<h1>Archive item</h1>
+<p>The item with ID @m.ItemId has been marked as collected.</p>
+
+<a asp-controller="Items" asp-action="List" class="btn btn-primary">Return to item list</a>

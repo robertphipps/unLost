@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "View pupil's items";
+    var p = (unLost.Web.Models.Pupil)Model;
+    var items = p.Items;
+    var categories = new ItemCategories();
+}
+
+<h1>Viewing @p.Forename's items</h1>
+<p><strong>Candidate No:</strong> @p.CandNo <strong>Name:</strong> @p.Forename @p.Surname <strong>Tutor Group:</strong> @p.TutorGp <strong>Email:</strong> @p.Email</p>
+<p><a class="btn btn-default" href="/Pupil/Edit/@p.PupilId">Edit Pupil</a></p>
+<caption>Found @p.Items.Count item(s)</caption>
+
+<div class="itemsTable">
+    <input class="search" placeholder="Search" />
+    <button class="sort" data-sort="added">
+        Sort by date
+    </button>
+    <table class="table table-hover">
+        <caption>Found @items.Count() items</caption>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Added</th>
+                <th>Category</th>
+                <th>Subcategory</th>
+                <th>Description</th>
+                <th>Mailed?</th>
+                <th>Edit</th>
+                <th>Collected?</th>
+            </tr>
+        </thead>
+        <tbody class="list">
+            @if (items.Count() == 0)
+            {
+                <tr>
+                    <td colspan="7" align="center"><em>No items found</em></td>
+                </tr>
+            }
+            else
+            {
+                foreach (var i in items)
+                {
+                    <tr>
+                        <td class="id">@i.ItemId</td>
+                        <td class="added">@i.Added.ToShortDateString()</td>
+                        <td class="cat">@categories.CategoryDictionary[i.ItemCat]</td>
+                        <td class="subcat">@categories.SubcatDictionaryDictionary[i.ItemCat][i.ItemSubcat]</td>
+                        <td class="desc">@i.ItemDesc</td>
+                        <td class="mailed">
+                            @if (i.Mailed.HasValue)
+                            {
+                                @i.Mailed
+                            }
+                            else
+                            {
+                                <em>No</em>
+                            }
+                        </td>
+                        <td>
+                            <a asp-controller="Items" asp-action="Edit" asp-route-id="@i.ItemId"><span class="glyphicon glyphicon-pencil"></span></a>
+                        </td>
+                        <td>
+                            @if (i.Collected.HasValue)
+                            {
+                                <em>Yes - @(i.Collected.Value.ToShortDateString())</em>
+                            }
+                            else
+                            {
+                                <a asp-controller="Items" asp-action="Archive" asp-route-id="@i.ItemId"><span class="glyphicon glyphicon-ok"></span></a>
+                            }
+
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

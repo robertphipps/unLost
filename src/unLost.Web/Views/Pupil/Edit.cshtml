@@ -1,0 +1,96 @@
+﻿@{
+    ViewData["Title"] = "Edit Pupil";
+    unLost.Web.Models.Pupil p = Model;
+    bool newPupil = false;
+    if (p == null)
+    {
+        newPupil = true;
+        p = new unLost.Web.Models.Pupil();
+    }
+}
+<h1>Edit Pupil</h1>
+
+<div id="alertContainer"></div>
+
+<form id="editForm">
+    <div class="form-group">
+        <label for="pupilIdField">Pupil ID</label>
+        <input id="pupilIdField" name="Id" type="text" class="form-control" readonly value="@(newPupil ? "0" : p.PupilId.ToString())" />
+    </div>
+    <div class="form-group">
+        <label for="pupilCandnoField">Candidate Number</label>
+        <input id="pupilCandnoField" name="Candno" type="text" class="form-control" value="@(newPupil ? "" : p.CandNo.ToString())" />
+    </div>
+    <div class="form-group">
+        <label for="pupilForenameField">Forename</label>
+        <input id="pupilForenameField" name="Forename" type="text" class="form-control" value="@(newPupil ? "" : p.Forename)" />
+    </div>
+    <div class="form-group">
+        <label for="pupilSurnameField">Surname</label>
+        <input id="pupilSurnameField" name="Surname" type="text" class="form-control" value="@(newPupil ? "" : p.Surname)" />
+    </div>
+    <div class="form-group">
+        <label for="pupilTutorgpField">Tutor Group</label>
+        <input id="pupilTutorgpField" name="Tutorgp" type="text" class="form-control" value="@(newPupil ? "" : p.TutorGp)" />
+    </div>
+    <div class="form-group">
+        <label for="pupilEmailField">Email Address</label>
+        <input id="pupilEmailField" name="Email" type="text" class="form-control" value="@(newPupil ? "" : p.Email)" />
+    </div>
+    <div class="form-group">
+        <button class="btn btn-primary" role="button" type="button" onClick="submitForm()">Submit</button>
+        <a class="btn btn-default" href="/Pupil/Edit/">New Pupil</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        var newPupil = @(newPupil ? "true" : "false");
+
+        $(document).ready(function() {
+            if (newPupil) {
+                addAlert("info", "You are creating a new pupil", false, "newPupilAlert");
+            }        
+        })
+        
+        function submitForm(){
+            if ( !validateForm() ) {
+                // TODO: Highlight broken fields, plus use bootstrap alert
+                alert("There is an error in your form");
+                return;
+            }
+            var formdata = $('#editForm').serialize();
+            $.ajax({
+                url: '/Pupil/Update',
+                data: formdata,
+                type: 'POST',
+                error: function(){
+                    alert("request failed");       
+                },
+                success: function(json){
+                    if (newPupil){
+                        $('#newPupilAlert').alert('close');
+                    }
+                    $('#pupilIdField').val(json.itemId);
+                    addAlert("success", json.status, true, 'successAlert');
+                }
+            });
+        }
+
+        function validateForm() {
+            // TODO: Form validation
+            return true;    
+        }
+
+        function addAlert(type, text, dismissible, id) {
+            var alert = '<div id="' + id + '" class="alert alert-' + type;
+            if (dismissible){
+                alert = alert + ' alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+            } else {
+                alert = alert + '" role="alert">';        
+            }
+            alert = alert + text + '</div>';
+            $('#alertContainer').append(alert);    
+        }
+    </script>
+}

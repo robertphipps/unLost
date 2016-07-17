@@ -1,0 +1,112 @@
+﻿@using System.Linq;
+@{
+    ViewData["Title"] = "List Items";
+    var m = (unLost.Web.Models.ViewModels.ListItemsModel)Model;
+    var items = m.items;
+    string modeString;
+    switch (m.mode)
+    {
+        case "All":
+            modeString = "";
+            break;
+        case "Archive":
+            modeString = "archived";
+            break;
+        default:
+            modeString = "uncollected";
+            break;
+    }
+    var categories = new ItemCategories();
+}
+
+<h1>@ViewData["Title"]</h1>
+<p><a class="btn btn-default" href="/Items/Edit"><span class="glyphicon glyphicon-plus-sign"></span> Add Item</a></p>
+
+<div class="itemsTable">
+    <input class="search" placeholder="Search" />
+    <button class="sort" data-sort="added">
+        Sort by date
+    </button>
+    <table class="table table-hover">
+        <caption>Found @items.Count() @modeString items</caption>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Added</th>
+                <th>Category</th>
+                <th>Subcategory</th>
+                <th>Description</th>
+                <th>Candidate No</th>
+                <th>Mailed?</th>
+                <th>Edit</th>
+                <th>Collected?</th>
+            </tr>
+        </thead>
+        <tbody class="list">
+            @if (items.Count() == 0)
+            {
+                <tr>
+                    <td colspan="7" align="center"><em>No items found</em></td>
+                </tr>
+            }
+            else
+            {
+                foreach (var i in items)
+                {
+                    <tr>
+                        <td class="id">@i.ItemId</td>
+                        <td class="added">@i.Added.ToShortDateString()</td>
+                        <td class="cat">@categories.CategoryDictionary[i.ItemCat]</td>
+                        <td class="subcat">@categories.SubcatDictionaryDictionary[i.ItemCat][i.ItemSubcat]</td>
+                        <td class="desc">@i.ItemDesc</td>
+                        <td class="pupil">
+                            @if (i.Pupil != null)
+                                            {
+                                                @i.Pupil.CandNo.ToString()
+                        }
+                        else
+                        {
+                            <em>No pupil assigned</em>
+                                        }
+                        </td>
+                        <td class="mailed">
+                            @if (i.Mailed.HasValue)
+                            {                                
+                                @i.Mailed
+                            }
+                            else
+                            {
+                                <em>No</em>
+                            }
+                        </td>
+                        <td>
+                            <a asp-controller="Items" asp-action="Edit" asp-route-id="@i.ItemId"><span class="glyphicon glyphicon-pencil"></span></a>
+                        </td>
+                        <td>
+                            @if (i.Collected.HasValue)
+                            {
+                                <em>Yes - @(i.Collected.Value.ToShortDateString())</em>
+                            }
+                            else
+                            {
+                                <a asp-controller="Items" asp-action="Archive" asp-route-id="@i.ItemId"><span class="glyphicon glyphicon-ok"></span></a>
+                            }
+
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@section Scripts {
+    <script src="~/lib/list.js/dist/list.min.js"></script>
+    <script>
+        var o = {
+                                        valueNames: ['id', 'added', 'cat', 'subcat', 'desc', 'pupil', 'mailed']
+        };
+        var itemList = new List('itemsTable', o);
+    </script>
+}

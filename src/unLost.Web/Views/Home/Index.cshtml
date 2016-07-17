@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    var items = Model;
+}
+
+<div class="row">
+    <div class="jumbotron">
+        <h2>Welcome to</h2>
+        <h1>unLost</h1>
+        <h3>The open source lost property management system</h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <h2>Get started</h2>
+        <ul>
+            <li><a asp-controller="Items" asp-action="Edit"><span class="glyphicon glyphicon-plus-sign"></span> Add a new item</a></li>
+            <li><a asp-controller="Items" asp-action="List"><span class="glyphicon glyphicon-list-alt"></span> List items</a></li>
+            <li><span class="glyphicon glyphicon-search"></span> Search database</li>
+            <li><a asp-controller="Pupil" asp-action="List"><span class="glyphicon glyphicon-user"></span> List pupils</a></li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h2>Overview</h2>
+        <p>
+            Please note that this software is <strong>under development</strong> and is not yet suitable for use in a production
+            environment.
+        </p>
+    </div>
+</div>
