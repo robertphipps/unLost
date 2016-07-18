@@ -41,8 +41,9 @@
     </div>
     <div class="form-group">
         <label for="itemPupilField">Pupil</label>
-        <input class="form-control" type="text" id="itemPupilField" readonly />
-        <button class="btn btn-default btn-sm" type="button">Choose</button>
+        <input type="text" id="itemPupilField" name="Pupil" value="@i.PupilId" hidden readonly />
+        <input class="form-control" type="text" id="itemPupilTextField" value="@(i.Pupil == null ? "No pupil assigned" : i.Pupil.Forename + i.Pupil.Surname)" readonly />
+        <button class="btn btn-default btn-sm" type="button" onClick="openPupilPicker()">Choose</button>
     </div>
     <div class="form-group">
         <label for="itemAddedField">Added</label>
@@ -70,6 +71,39 @@
         <a class="btn btn-default" href="/Items/Edit/">New Item</a>
     </div>
 </form>
+
+<!-- Modal -->
+<div class="modal fade" id="pupilPicker" tabindex="-1" role="dialog" aria-labelledby="pupilPickerLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="pupilPickerLabel">Select a pupil</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Forename</th>
+                            <th>Surname</th>
+                            <th>Tutor Gp</th>
+                            <th>Candidate #</th>
+                            <th>Use</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pupilPickerTableBody">
+                        <tr>
+                            <td colspan="5">Please wait...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
 <script>
@@ -141,9 +175,9 @@
             success: function(json){
                 if (newItem){
                     $('#newItemAlert').alert('close');
+                    $('#itemAddedField').val("Just now");
                 }
                 $('#itemIdField').val(json.itemId);
-                $('#itemAddedField').val("Just now");
                 addAlert("success", json.status, true, 'successAlert');
             }
         });
@@ -163,6 +197,23 @@
         }
         alert = alert + text + '</div>';
         $('#alertContainer').append(alert);    
+    }
+
+    function openPupilPicker() {
+        $('#pupilPicker').modal('show');
+        $.getJSON("/Pupil/ListJson", function(data) {
+            var t = $('#pupilPickerTableBody');
+            t.html("");
+            $.each (data, function(i, item) {
+                t.append("<tr><td>"+item.Forename+"</td><td>"+item.Surname+"</td><td>"+item.TutorGp+"</td><td>"+item.CandNo+"</td><td><button class=\"btn btn-default\" type=\"button\" onClick=\"usePupil("+item.PupilId+", '"+item.Forename+" "+item.Surname+"')\">Select</button></td></tr>");         
+            });
+        })
+    }
+
+    function usePupil(id, name) {
+        $('#itemPupilField').val(id);
+        $('#itemPupilTextField').val(name);
+        $('#pupilPicker').modal('hide');
     }
 </script>
 }

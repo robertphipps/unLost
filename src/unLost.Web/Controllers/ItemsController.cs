@@ -54,6 +54,7 @@ namespace unLost.Web.Controllers
             {
                 // new Item
                 item = new Models.Item();
+                item.PupilId = model.Pupil;
                 item.ItemCat = model.Cat;
                 item.ItemSubcat = model.Subcat;
                 item.ItemDesc = model.Desc;
@@ -63,6 +64,7 @@ namespace unLost.Web.Controllers
             {
                 // update existing item
                 item = items.Where(i => i.ItemId == model.Id).First();
+                item.PupilId = model.Pupil;
                 item.ItemCat = model.Cat;
                 item.ItemSubcat = model.Subcat;
                 item.ItemDesc = model.Desc;

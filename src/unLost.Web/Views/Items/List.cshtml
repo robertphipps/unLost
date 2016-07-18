@@ -21,22 +21,24 @@
 
 <h1>@ViewData["Title"]</h1>
 <p><a class="btn btn-default" href="/Items/Edit"><span class="glyphicon glyphicon-plus-sign"></span> Add Item</a></p>
+<div class="btn-group">
+    <a href="/Items/List/All" class="btn btn-default @(modeString == "" ? "active" : "")">Show all</a>
+    <a href="/Items/List/Archive" class="btn btn-default @(modeString == "archived" ? "active" : "")">Show collected</a>
+    <a href="/Items/List/" class="btn btn-default @(modeString == "uncollected" ? "active" : "")">Show new</a>
+</div>
 
 <div class="itemsTable">
     <input class="search" placeholder="Search" />
-    <button class="sort" data-sort="added">
-        Sort by date
-    </button>
     <table class="table table-hover">
         <caption>Found @items.Count() @modeString items</caption>
         <thead>
             <tr>
                 <th>#</th>
-                <th>Added</th>
-                <th>Category</th>
+                <th class="sort" data-sort="added">Added</thclass="sort">
+                <th class="sort" data-sort="category">Category</th>
                 <th>Subcategory</th>
                 <th>Description</th>
-                <th>Candidate No</th>
+                <th class="sort" data-sort="pupil">Candidate No</th>
                 <th>Mailed?</th>
                 <th>Edit</th>
                 <th>Collected?</th>

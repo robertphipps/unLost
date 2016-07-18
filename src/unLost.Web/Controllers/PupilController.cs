@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using unLost.Web.Models;
+using Newtonsoft.Json;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -68,6 +69,12 @@ namespace unLost.Web.Controllers
         {
             var pupil = db.Pupils.Where(p => p.PupilId == id).First();
             return View(pupil);
+        }
+
+        public string ListJson()
+        {
+            var pupils = db.Pupils;
+            return JsonConvert.SerializeObject(pupils, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
         }
     }
 }

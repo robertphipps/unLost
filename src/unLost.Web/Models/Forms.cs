@@ -10,6 +10,7 @@ namespace unLost.Web.Models
         public class ItemEditFormPostback
         {
             public int Id { get; set; }
+            public int Pupil { get; set; }
             public int Cat { get; set; }
             public int Subcat { get; set; }
             public string Desc { get; set; }
