@@ -33,13 +33,14 @@
         <caption>Found @items.Count() @modeString items</caption>
         <thead>
             <tr>
-                <th>#</th>
-                <th class="sort" data-sort="added">Added</thclass="sort">
-                <th class="sort" data-sort="category">Category</th>
-                <th>Subcategory</th>
+                <th>Log #</th>
+                <th class="sort" data-sort="added">Added</th>
+                <th class="sort" data-sort="forename">Pupil Forename</th>
+                <th class="sort" data-sort="surname">Pupil Surname</th>
+                <th>Item Category</th>
                 <th>Description</th>
-                <th class="sort" data-sort="pupil">Candidate No</th>
-                <th>Mailed?</th>
+                <th>Tutor Gp</th>
+                <th>Tutor</th>
                 <th>Edit</th>
                 <th>Collected?</th>
             </tr>
@@ -48,7 +49,7 @@
             @if (items.Count() == 0)
             {
                 <tr>
-                    <td colspan="7" align="center"><em>No items found</em></td>
+                    <td colspan="10" align="center"><em>No items found</em></td>
                 </tr>
             }
             else
@@ -56,31 +57,14 @@
                 foreach (var i in items)
                 {
                     <tr>
-                        <td class="id">@i.ItemId</td>
+                        <td class="logno">@(i.ItemLogNo != null ? i.ItemLogNo.ToString() : "-")</td>
                         <td class="added">@i.Added.ToShortDateString()</td>
-                        <td class="cat">@categories.CategoryDictionary[i.ItemCat]</td>
-                        <td class="subcat">@categories.SubcatDictionaryDictionary[i.ItemCat][i.ItemSubcat]</td>
+                        <td class="forename">@(i.Pupil != null ? i.Pupil.Forename : "n/a")</td>
+                        <td class="surname">@(i.Pupil != null ? i.Pupil.Surname : "n/a")</td>
+                        <td class="cat">@categories.CategoryDictionary[i.ItemCat] - @categories.SubcatDictionaryDictionary[i.ItemCat][i.ItemSubcat]</td>
                         <td class="desc">@i.ItemDesc</td>
-                        <td class="pupil">
-                            @if (i.Pupil != null)
-                                            {
-                                                @i.Pupil.CandNo.ToString()
-                        }
-                        else
-                        {
-                            <em>No pupil assigned</em>
-                                        }
-                        </td>
-                        <td class="mailed">
-                            @if (i.Mailed.HasValue)
-                            {                                
-                                @i.Mailed
-                            }
-                            else
-                            {
-                                <em>No</em>
-                            }
-                        </td>
+                        <td class="tutorgp">@(i.Pupil.TutorGp != null ? i.Pupil.TutorGp.Name : "n/a")</td>
+                        <td class="tutor">@(i.Pupil.TutorGp != null ? i.Pupil.TutorGp.Tutor : "n/a")</td>
                         <td>
                             <a asp-controller="Items" asp-action="Edit" asp-route-id="@i.ItemId"><span class="glyphicon glyphicon-pencil"></span></a>
                         </td>

@@ -14,6 +14,7 @@ namespace unLost.Web
 
         public DbSet<Models.Item> Items { get; set; }
         public DbSet<Models.Pupil> Pupils { get; set; }
+        public DbSet<Models.TutorGp> TutorGps { get; set; }
 
     }
 }

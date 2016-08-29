@@ -48,7 +48,7 @@ namespace unLost.Web.Controllers
                 pupil.Forename = model.Forename;
                 pupil.Surname = model.Surname;
                 pupil.Email = model.Email;
-                pupil.TutorGp = model.Tutorgp;
+                pupil.TutorGpId = model.TutorGpId;
                 pupils.Add(pupil);
             }
             else
@@ -59,7 +59,7 @@ namespace unLost.Web.Controllers
                 pupil.Forename = model.Forename;
                 pupil.Surname = model.Surname;
                 pupil.Email = model.Email;
-                pupil.TutorGp = model.Tutorgp;
+                pupil.TutorGpId = model.TutorGpId;
             }
             db.SaveChanges();
             return Json(new UpdateResponse(true, "Changes saved", pupil.PupilId));

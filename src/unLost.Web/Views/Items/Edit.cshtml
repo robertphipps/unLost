@@ -16,7 +16,11 @@
 <form id="editForm">
     <div class="form-group">
         <label for="itemIdField">Item ID</label>
-        <input id="itemIdField" name="Id" type="text" class="form-control" readonly value="@(newItem ? "0" : i.ItemId.ToString())" />
+        <input id="itemIdField" name="Id" type="text" class="form-control" readonly value="@(newItem ? "auto-generated" : i.ItemId.ToString())" />
+    </div>
+    <div class="form-group">
+        <label for="itemIdField">Log Number</label>
+        <input id="itemLogNoField" name="LogNo" type="text" class="form-control" />
     </div>
     <div class="form-group">
         <label for="itemCatField">Category</label>
